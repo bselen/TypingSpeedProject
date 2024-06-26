@@ -13,6 +13,11 @@ import java.awt.event.ActionListener;
  *
  * @author selenyildirim
  */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class TypingCalculator extends JFrame {
     private SentenceProvider sentenceProvider;
     private JLabel sentenceLabel;
@@ -20,75 +25,75 @@ public class TypingCalculator extends JFrame {
     private JLabel wpmLabel;
     private long startTime;
     private int wordCount = 5;
-    
-    public TypingCalculator(SentenceProvider sentenceProvider){
+    private boolean retry;
+
+    public TypingCalculator(SentenceProvider sentenceProvider) {
         this.sentenceProvider = sentenceProvider;
+        this.retry = false;
         calculatorGUI();
-        
-                
     }
-    
-    public void calculatorGUI(){
+
+    public void calculatorGUI() {
         setTitle("Typing Speed Test");
-        setSize(600,200);
+        setSize(600, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         sentenceLabel = new JLabel("Press Enter to Start", SwingConstants.CENTER);
         inputField = new JTextField();
         wpmLabel = new JLabel("", SwingConstants.CENTER);
-        
-      inputField.addActionListener(new ActionListener() {
+
+        inputField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               handleInput();
-               
-      }
-    });
+                handleInput();
+            }
+        });
+
         setLayout(new BorderLayout());
         add(sentenceLabel, BorderLayout.NORTH);
         add(inputField, BorderLayout.CENTER);
-        add(wpmLabel,BorderLayout.SOUTH);
-        
+        add(wpmLabel, BorderLayout.SOUTH);
     }
-    
-    private void handleInput(){
+
+    private void handleInput() {
         String inputText = inputField.getText();
-        if(startTime == 0){
+        if (retry) {
             startTyping();
-            
-        } else{
+        } else if (startTime == 0) {
+            startTyping();
+        } else {
             checkInput(inputText);
-            
         }
     }
-   
-    private void startTyping(){
+
+    private void startTyping() {
         startTime = System.currentTimeMillis();
         String sentence = sentenceProvider.getRandomSentence(wordCount);
         sentenceLabel.setText(sentence);
         inputField.setText("");
         inputField.requestFocus();
-              
+        retry = false;
     }
-    
-    private void checkInput(String inputText){
+
+    private void checkInput(String inputText) {
         long endTime = System.currentTimeMillis();
         String displaySentence = sentenceLabel.getText();
-        
-        if(inputText.trim().equals(displaySentence.trim())){
-        long totalTime = endTime - startTime;
-        double timeInMinutes = totalTime / 60000.0;
-        int wpm = (int) (wordCount / timeInMinutes);
-        
-        wpmLabel.setText("WPM: " + wpm);
-        startTime = 0;
-        inputField.setText("");
-        sentenceLabel.setText("Press Enter to Start");
-        } else{
-            wpmLabel.setText("Incorrect! Try again.");
-        } 
-      
+
+        if (inputText.trim().equals(displaySentence.trim())) {
+            long totalTime = endTime - startTime;
+            double timeInMinutes = totalTime / 60000.0;
+            int wpm = (int) (wordCount / timeInMinutes);
+
+            wpmLabel.setText("WPM: " + wpm);
+            startTime = 0;
+            inputField.setText("");
+            sentenceLabel.setText("Press Enter to Start");
+        } else {
+            wpmLabel.setText("Incorrect! Press Enter to Try Again.");
+            retry = true;
+            startTime = 0;
+            inputField.setText("");
+        }
     }
-  
 }

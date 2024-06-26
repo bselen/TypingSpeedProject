@@ -5,39 +5,32 @@ package com.mycompany.typingspeedproject;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-import java.util.Random;
-/**
- *
- * @author selenyildirim
- */
-public class SentenceProvider {
-   private String words[] = {"apple", "confusing","eloborate", "unknown", "expired", "pinapple", "inherit"};
-   private Random random = new Random(); //declare
-   
-    // public SentenceProvider(String words){
-       //  this.words = this.words;
-        // this.random = new Random();
-         
+ import java.util.Random;
 
-   
-   
-      
-     public String getRandomSentence(int wordCount){
-        StringBuilder sentence = new StringBuilder();
-        
-         for(int i = 0; i < wordCount; i++){
-             int index = random.nextInt(words.length);
-             sentence.append(words[index]);
-             
-             if(i < wordCount -1 ){
-               sentence.append(" ");
-             }
-         }
-             
+ public class SentenceProvider {
+    private String words[] = {"apple", "confusing", "elaborate", "unknown", "expired", "pineapple", "inherit",
+                 "car", "grape", "shirt", "dog", "cat", "plank", "orange", "community", "pizza", "elf", "sword", "cape", "pants", "shoes", "box"};
+    private Random random = new Random(); //declare
      
-         return sentence.toString();
-    
-
-    
-}
-}
+     public String getRandomSentence(int wordCount) {
+         StringBuilder sentence = new StringBuilder();
+         buildSentence(sentence, wordCount);
+         return sentence.toString().trim();
+     }
+ 
+     //Recursive Method
+     private void buildSentence(StringBuilder sentence, int remainingWords) {
+         if (remainingWords == 0) {      //base case: terminate when words are zero.
+             return;
+         }
+ 
+         int index = random.nextInt(words.length);   //Pick random word from words array.
+         sentence.append(words[index]);      // Add randoms words to sentence
+ 
+         if (remainingWords > 1) {       //Add a space if there are more words to add.
+             sentence.append(" ");
+         }
+         
+         buildSentence(sentence, remainingWords - 1);    //Remove one until base case is reached.
+     }
+ }
